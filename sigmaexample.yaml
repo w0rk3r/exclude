@@ -1,0 +1,27 @@
+title: Powershell Command Execution
+description: Detects the use of Powershell on Windows Servers
+logsource:
+    product: Windows
+detection:
+    selection:
+      index: windows
+      EventCode: 4688
+    keyword:
+      - "powershell"
+    exclusion1:
+      Process_Command_Line: 
+        - "*C:\\Windows\\System32\\slmgr.vbs*"
+        - "*C:\\zabbix_agent\\scripts\\windows_certs.ps1\" -ActionType*"
+        - "*\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1*"
+    exclusion2:
+      Creator_Process_Name: 
+        - "C:\\Program Files\\SplunkUniversalForwarder\\bin\\splunkd.exe"
+        - "C:\\zabbix_Agent\\bin\\zabbix_agentd.exe"
+        - "C:\\Program Files\\Azure Ad Connect Health Adfs Agent\\Insights\\Microsoft.Identity.Health.Adfs.InsightsService.exe"
+    exclusion3:
+     New_Process_Name: "C:\\Program Files\\SplunkUniversalForwarder\\bin\\splunk-powershell.exe"
+    timeframe: 1h 
+    condition: selection and keyword and not exclusion1 and not exclusion2 and not exclusion3
+falsepositives:
+    -  
+level: medium
